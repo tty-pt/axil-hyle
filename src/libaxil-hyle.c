@@ -11,7 +11,7 @@
 #include <ttypt/qmap.h>
 #include <json-c/json.h>
 #include <hyle/hyle.h>
-#include <hyle/source.h>
+#include <hyle/registry.h>
 #include <hyle-source/hyle_source.h>
 #include <ttypt/axil-hyle.h>
 
@@ -1209,15 +1209,15 @@ static int source_get_ordered_handler(int fd, char *body)
 	if (!dataset_id[0] || !key[0])
 		return respond_json_error(fd, 400, "Missing parameters");
 
-	unsigned fhd = hyle_source_get_fields_hd(dataset_id);
+	unsigned fhd = hyle_registry_get_fields_hd(dataset_id);
 	if (!fhd)
 		return respond_json_error(fd, 404, "Dataset not found");
 
-	int total = hyle_source_ordered_count(dataset_id, key);
+	int total = hyle_ordered_count(dataset_id, key);
 	if (total < 0)
 		total = 0;
 
-	size_t nfields = hyle_source_get_field_count(dataset_id);
+	size_t nfields = hyle_registry_get_field_count(dataset_id);
 
 	struct json_object *root = json_object_new_object();
 	struct json_object *items_arr = json_object_new_array();
@@ -1226,7 +1226,7 @@ static int source_get_ordered_handler(int fd, char *body)
 
 	for (int i = 0; i < total; i++) {
 		const char *item_key =
-		        hyle_source_ordered_key_at(dataset_id, key, i);
+		        hyle_ordered_key_at(dataset_id, key, i);
 		if (!item_key)
 			continue;
 		struct json_object *row = json_object_new_object();
@@ -1236,7 +1236,7 @@ static int source_get_ordered_handler(int fd, char *body)
 
 		for (size_t j = 0; j < nfields; j++) {
 			const char *fname =
-			        hyle_source_get_field_name(dataset_id, j);
+			        hyle_registry_get_field_name(dataset_id, j);
 			if (!fname)
 				continue;
 			const char *fval = qmap_field_get(fhd, item_key, fname);
@@ -1273,7 +1273,7 @@ static int source_post_ordered_handler(int fd, char *body)
 	if (!dataset_id[0] || !key[0])
 		return respond_json_error(fd, 400, "Missing parameters");
 
-	unsigned fhd = hyle_source_get_fields_hd(dataset_id);
+	unsigned fhd = hyle_registry_get_fields_hd(dataset_id);
 	if (!fhd)
 		return respond_json_error(fd, 404, "Dataset not found");
 
@@ -1287,16 +1287,16 @@ static int source_post_ordered_handler(int fd, char *body)
 	if (body && body[0])
 		axil_query_parse(body);
 
-	size_t nfields = hyle_source_get_field_count(dataset_id);
+	size_t nfields = hyle_registry_get_field_count(dataset_id);
 	const char *names[64];
 	const char *vals[64];
 	char val_bufs[64][256];
 	size_t count = 0;
 
 	for (size_t j = 0; j < nfields && count < 64; j++) {
-		const char *fname = hyle_source_get_field_name(dataset_id, j);
+		const char *fname = hyle_registry_get_field_name(dataset_id, j);
 		if (!fname ||
-		    hyle_source_get_field_type(dataset_id, j) ==
+		    hyle_registry_get_field_type(dataset_id, j) ==
 		            HYLE_FIELD_INVERSE)
 			continue;
 		val_bufs[count][0] = '\0';
@@ -1307,13 +1307,13 @@ static int source_post_ordered_handler(int fd, char *body)
 		count++;
 	}
 
-	if (hyle_source_ordered_append(dataset_id, key, names, vals, count) !=
+	if (hyle_ordered_append(dataset_id, key, names, vals, count) !=
 	    0)
 		return respond_json_error(fd, 500, "Failed to append item");
 
-	hyle_source_ordered_save(dataset_id, key);
+	hyle_ordered_save(dataset_id, key);
 
-	int total = hyle_source_ordered_count(dataset_id, key);
+	int total = hyle_ordered_count(dataset_id, key);
 	char resp[128];
 	snprintf(
 	        resp, sizeof(resp), "{\"ok\":true,\"index\":%d}",
@@ -1335,7 +1335,7 @@ static int source_put_ordered_handler(int fd, char *body)
 	if (!dataset_id[0] || !key[0] || !n_str[0])
 		return respond_json_error(fd, 400, "Missing parameters");
 
-	unsigned fhd = hyle_source_get_fields_hd(dataset_id);
+	unsigned fhd = hyle_registry_get_fields_hd(dataset_id);
 	if (!fhd)
 		return respond_json_error(fd, 404, "Dataset not found");
 
@@ -1347,27 +1347,27 @@ static int source_put_ordered_handler(int fd, char *body)
 		return respond_json_error(fd, 403, "Forbidden");
 
 	int idx = atoi(n_str);
-	int total = hyle_source_ordered_count(dataset_id, key);
+	int total = hyle_ordered_count(dataset_id, key);
 	if (idx < 0 || idx >= total)
 		return respond_json_error(fd, 404, "Index out of bounds");
 
-	const char *item_key = hyle_source_ordered_key_at(dataset_id, key, idx);
+	const char *item_key = hyle_ordered_key_at(dataset_id, key, idx);
 	if (!item_key)
 		return respond_json_error(fd, 404, "Item not found");
 
 	if (body && body[0])
 		axil_query_parse(body);
 
-	size_t nfields = hyle_source_get_field_count(dataset_id);
+	size_t nfields = hyle_registry_get_field_count(dataset_id);
 	const char *names[64];
 	const char *vals[64];
 	char val_bufs[64][256];
 	size_t count = 0;
 
 	for (size_t j = 0; j < nfields && count < 64; j++) {
-		const char *fname = hyle_source_get_field_name(dataset_id, j);
+		const char *fname = hyle_registry_get_field_name(dataset_id, j);
 		if (!fname ||
-		    hyle_source_get_field_type(dataset_id, j) ==
+		    hyle_registry_get_field_type(dataset_id, j) ==
 		            HYLE_FIELD_INVERSE)
 			continue;
 		val_bufs[count][0] = '\0';
@@ -1382,8 +1382,8 @@ static int source_put_ordered_handler(int fd, char *body)
 	}
 
 	if (count > 0) {
-		hyle_source_put(dataset_id, item_key, names, vals, count);
-		hyle_source_ordered_save(dataset_id, key);
+		hyle_registry_put(dataset_id, item_key, names, vals, count);
+		hyle_ordered_save(dataset_id, key);
 	}
 
 	char resp[128];
@@ -1406,7 +1406,7 @@ static int source_delete_ordered_handler(int fd, char *body)
 	if (!dataset_id[0] || !key[0] || !n_str[0])
 		return respond_json_error(fd, 400, "Missing parameters");
 
-	unsigned fhd = hyle_source_get_fields_hd(dataset_id);
+	unsigned fhd = hyle_registry_get_fields_hd(dataset_id);
 	if (!fhd)
 		return respond_json_error(fd, 404, "Dataset not found");
 
@@ -1418,12 +1418,12 @@ static int source_delete_ordered_handler(int fd, char *body)
 		return respond_json_error(fd, 403, "Forbidden");
 
 	int idx = atoi(n_str);
-	int total = hyle_source_ordered_count(dataset_id, key);
+	int total = hyle_ordered_count(dataset_id, key);
 	if (idx < 0 || idx >= total)
 		return respond_json_error(fd, 404, "Index out of bounds");
 
-	hyle_source_ordered_remove_at(dataset_id, key, idx);
-	hyle_source_ordered_save(dataset_id, key);
+	hyle_ordered_remove_at(dataset_id, key, idx);
+	hyle_ordered_save(dataset_id, key);
 
 	return respond_json(fd, 200, "{\"ok\":true}");
 }
@@ -1618,7 +1618,7 @@ int axil_hyle_partition_execute(
 			return respond_json_error(fd, 403, "Forbidden");
 	}
 
-	size_t n_fields = hyle_source_get_field_count(spec->partition_source);
+	size_t n_fields = hyle_registry_get_field_count(spec->partition_source);
 	if (n_fields == 0)
 		return respond_json_error(fd, 404, "Dataset not found");
 
@@ -1644,8 +1644,8 @@ int axil_hyle_partition_execute(
 		size_t count = 0;
 
 		for (size_t i = 0; i < n_fields && count < 64; i++) {
-			const char *fname = hyle_source_get_field_name(spec->partition_source, i);
-			if (!fname || hyle_source_get_field_type(spec->partition_source, i) == HYLE_FIELD_INVERSE)
+			const char *fname = hyle_registry_get_field_name(spec->partition_source, i);
+			if (!fname || hyle_registry_get_field_type(spec->partition_source, i) == HYLE_FIELD_INVERSE)
 				continue;
 			names[count] = fname;
 			if (strcmp(fname, primary_field) == 0) {
@@ -1656,7 +1656,7 @@ int axil_hyle_partition_execute(
 				val_bufs[count][0] = '\0';
 				get_field_val(fd, body, fname, spec->aliases, val_bufs[count], sizeof(val_bufs[count]));
 				if (!val_bufs[count][0]) {
-					hyle_field_type_t ft = hyle_source_get_field_type(spec->partition_source, i);
+					hyle_field_type_t ft = hyle_registry_get_field_type(spec->partition_source, i);
 					if (ft == HYLE_FIELD_INT || ft == HYLE_FIELD_BOOL)
 						strcpy(val_bufs[count], "0");
 					else
@@ -1668,7 +1668,7 @@ int axil_hyle_partition_execute(
 		}
 
 		hyle_source_ordered_append_and_save(spec->partition_source, parent_id, names, vals, count);
-		row_idx = hyle_source_ordered_count(spec->partition_source, parent_id) - 1;
+		row_idx = hyle_ordered_count(spec->partition_source, parent_id) - 1;
 	} else if (strcmp(action, "remove") == 0) {
 		if (spec->positional) {
 			char n_str[32] = { 0 };
@@ -1731,7 +1731,7 @@ int axil_hyle_partition_execute(
 		}
 
 		for (size_t i = 0; i < n_fields; i++) {
-			const char *fname = hyle_source_get_field_name(spec->partition_source, i);
+			const char *fname = hyle_registry_get_field_name(spec->partition_source, i);
 			if (!fname || strcmp(fname, primary_field) == 0)
 				continue;
 			char fval[256] = { 0 };
@@ -1739,7 +1739,7 @@ int axil_hyle_partition_execute(
 			if (fval[0])
 				hyle_source_ordered_set_field(spec->partition_source, parent_id, row_idx, fname, fval);
 		}
-		hyle_source_ordered_save(spec->partition_source, parent_id);
+		hyle_ordered_save(spec->partition_source, parent_id);
 	} else if (strcmp(action, "update") == 0 || strcmp(action, "key") == 0) {
 		char target_child[128] = { 0 };
 		char param_env[64];
@@ -1764,7 +1764,7 @@ int axil_hyle_partition_execute(
 
 		if (row_idx >= 0) {
 			for (size_t i = 0; i < n_fields; i++) {
-				const char *fname = hyle_source_get_field_name(spec->partition_source, i);
+				const char *fname = hyle_registry_get_field_name(spec->partition_source, i);
 				if (!fname || strcmp(fname, primary_field) == 0)
 					continue;
 				if (spec->pin_field && strcmp(fname, spec->pin_field) == 0) {
@@ -1776,7 +1776,7 @@ int axil_hyle_partition_execute(
 				if (fval[0])
 					hyle_source_ordered_set_field(spec->partition_source, parent_id, row_idx, fname, fval);
 			}
-			hyle_source_ordered_save(spec->partition_source, parent_id);
+			hyle_ordered_save(spec->partition_source, parent_id);
 		} else if (spec->pin_field && target_child[0]) {
 			const char *names[64];
 			const char *vals[64];
@@ -1784,7 +1784,7 @@ int axil_hyle_partition_execute(
 			size_t count = 0;
 
 			for (size_t i = 0; i < n_fields && count < 64; i++) {
-				const char *fname = hyle_source_get_field_name(spec->partition_source, i);
+				const char *fname = hyle_registry_get_field_name(spec->partition_source, i);
 				if (!fname) continue;
 				names[count] = fname;
 				if (strcmp(fname, primary_field) == 0) {
@@ -1795,7 +1795,7 @@ int axil_hyle_partition_execute(
 					val_bufs[count][0] = '\0';
 					get_field_val(fd, body, fname, spec->aliases, val_bufs[count], sizeof(val_bufs[count]));
 					if (!val_bufs[count][0]) {
-						hyle_field_type_t ft = hyle_source_get_field_type(spec->partition_source, i);
+						hyle_field_type_t ft = hyle_registry_get_field_type(spec->partition_source, i);
 						if (ft == HYLE_FIELD_INT || ft == HYLE_FIELD_BOOL)
 							strcpy(val_bufs[count], "0");
 						else
@@ -1806,7 +1806,7 @@ int axil_hyle_partition_execute(
 				count++;
 			}
 			hyle_source_ordered_append_and_save(spec->partition_source, parent_id, names, vals, count);
-			row_idx = hyle_source_ordered_count(spec->partition_source, parent_id) - 1;
+			row_idx = hyle_ordered_count(spec->partition_source, parent_id) - 1;
 		}
 	}
 
