@@ -10,11 +10,12 @@ jobs:
     uses: tty-pt/ci/.github/workflows/all-in-one.yml@main
     with:
       name: axil-hyle
-      deps: "axil,libqmap,libxylem,libhyle,libhyle-source,axil-auth"
-      deps_deb: "axil,libqmap,libxylem,libhyle,libhyle-source,axil-auth,libjson-c-dev"
-      deps_apk: "axil,libqmap,libxylem,libhyle,libhyle-source,axil-auth,json-c-dev"
-      deps_rpm: "axil,libqmap,libxylem,libhyle,libhyle-source,axil-auth,json-c-devel"
-      deps_brew: "axil,libqmap,libxylem,libhyle,libhyle-source,axil-auth,json-c"
+      deps: "axil,libcorm,libxylem,libhyle,libhyle-source,axil-auth"
+      deps_openbsd: "axil,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c"
+      deps_deb: "axil,libcorm,libxylem,libhyle,libhyle-source,axil-auth,libjson-c-dev"
+      deps_apk: "axil,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c-dev"
+      deps_rpm: "axil,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c-devel"
+      deps_brew: "axil,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c"
       publish_to: "deb,apk,rpm,brew,openbsd"
     secrets:
       HOST: ${{ secrets.OPENBSD_HOST }}

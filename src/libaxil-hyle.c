@@ -8,7 +8,7 @@
 
 #include <ttypt/axil.h>
 #include <ttypt/auth.h>
-#include <ttypt/qmap.h>
+#include <ttypt/corm.h>
 #include <json-c/json.h>
 #include <hyle/hyle.h>
 #include <hyle/registry.h>
@@ -273,7 +273,7 @@ static int source_get_param(const char *body, const char *key, char *buf, size_t
 static int source_parse_row_data_body(const hyle_source_def_t *def, const char *body)
 {
 #define PARSE_BUF_CAP (256 * 1024)
-	unsigned hd = qmap_open(NULL, "row_data", QM_STR, QM_STR, 0x1F, 0);
+	unsigned hd = corm_open(NULL, "row_data", CM_STR, CM_STR, 0x1F, 0);
 	if (hd == 0)
 		return 0;
 
@@ -284,7 +284,7 @@ static int source_parse_row_data_body(const hyle_source_def_t *def, const char *
 
 		char *val = calloc(1, PARSE_BUF_CAP);
 		if (!val) {
-			qmap_close(hd);
+			corm_close(hd);
 			return 0;
 		}
 		int ret_len = source_get_param(body, f->name, val, PARSE_BUF_CAP);
@@ -295,10 +295,10 @@ static int source_parse_row_data_body(const hyle_source_def_t *def, const char *
 		}
 		if (ret_len >= (int)(PARSE_BUF_CAP - 1)) {
 			free(val);
-			qmap_close(hd);
+			corm_close(hd);
 			return -1;
 		}
-		qmap_put(hd, f->name, val);
+		corm_put(hd, f->name, val);
 		free(val);
 	}
 #undef PARSE_BUF_CAP
@@ -460,12 +460,12 @@ static json_object *source_build_inverse_array(
 	if (!target || !target->fields_hd)
 		return json_object_new_array();
 
-	uint32_t pos = qmap_pos(def->fields_hd, item_id);
+	uint32_t pos = corm_pos(def->fields_hd, item_id);
 	if (pos == UINT32_MAX)
 		return json_object_new_array();
 
 	uint32_t inv_buf[256];
-	size_t count = qmap_inv_get(
+	size_t count = corm_inv_get(
 	        target->fields_hd, field->inverse_name, pos, inv_buf, 256);
 
 	json_object *ja = json_object_new_array();
@@ -473,7 +473,7 @@ static json_object *source_build_inverse_array(
 		return json_object_new_array();
 
 	for (size_t i = 0; i < count; i++) {
-		const char *key = qmap_get_key(target->fields_hd, inv_buf[i]);
+		const char *key = corm_get_key(target->fields_hd, inv_buf[i]);
 		if (key) {
 			json_object_array_add(ja, json_object_new_string(key));
 		}
@@ -501,13 +501,13 @@ static int source_build_rows_json(
 	}
 
 	{
-		const char *ts = qmap_get(result_hd, "__total__");
+		const char *ts = corm_get(result_hd, "__total__");
 		*out_total_rows = ts ? atoi(ts) : 0;
 	}
 
 	ja = json_object_new_array();
 	if (!ja) {
-		qmap_close(result_hd);
+		corm_close(result_hd);
 		return -1;
 	}
 
@@ -516,9 +516,9 @@ static int source_build_rows_json(
 	if (has_include)
 		snprintf(inc_set, sizeof(inc_set), ",id,%s,", include);
 
-	cur = qmap_iter(result_hd, NULL, 0);
+	cur = corm_iter(result_hd, NULL, 0);
 
-	while (qmap_next(&key_ptr, &val_ptr, cur)) {
+	while (corm_next(&key_ptr, &val_ptr, cur)) {
 		const char *item_id = (const char *)key_ptr;
 		json_object *jo;
 		size_t i;
@@ -549,7 +549,7 @@ static int source_build_rows_json(
 					continue;
 			}
 
-			val = hyle_qmap_get_field_str(def->fields_hd, item_id, f->name);
+			val = hyle_corm_get_field_str(def->fields_hd, item_id, f->name);
 
 			switch (f->type) {
 			case HYLE_FIELD_STRING:
@@ -610,9 +610,9 @@ static int source_build_rows_json(
 		json_object_array_add(ja, jo);
 	}
 
-	qmap_fin(cur);
+	corm_fin(cur);
 	*out_rows_ja = ja;
-	qmap_close(result_hd);
+	corm_close(result_hd);
 	return 0;
 }
 
@@ -686,7 +686,7 @@ static void source_resolve_ref_display(
 		return;
 
 	snprintf(name_key, sizeof(name_key), "%s:%s", item_id, f->name);
-	val = (const char *)qmap_get(def->fields_hd, name_key);
+	val = (const char *)corm_get(def->fields_hd, name_key);
 	if (!val || !val[0])
 		return;
 
@@ -719,7 +719,7 @@ static int source_http_get_item_json(
 			return 401;
 	}
 
-	if (!qmap_get(def->source_hd, item_id)) {
+	if (!corm_get(def->source_hd, item_id)) {
 		if (hyle_source_refresh_row(fd, dataset_id, item_id) != 0)
 			return 404;
 	}
@@ -893,8 +893,8 @@ static int source_post_handler(int fd, char *body)
 	if (data_hd == 0)
 		return respond_json_error(fd, 500, "Failed to parse row data");
 
-	if (!qmap_get(data_hd, def->key_field))
-		qmap_put(data_hd, def->key_field, id);
+	if (!corm_get(data_hd, def->key_field))
+		corm_put(data_hd, def->key_field, id);
 
 	char *err_json = NULL;
 	if (hyle_source_validate_row(def, data_hd, &err_json)) {
@@ -902,7 +902,7 @@ static int source_post_handler(int fd, char *body)
 			respond_422_close(fd, err_json);
 			free(err_json);
 		}
-		qmap_close(data_hd);
+		corm_close(data_hd);
 		return 0;
 	}
 
@@ -910,7 +910,7 @@ static int source_post_handler(int fd, char *body)
 	if (rc == 0) {
 		source_after_update(fd, def->id, id, data_hd);
 	}
-	qmap_close(data_hd);
+	corm_close(data_hd);
 
 	if (rc != 0)
 		return respond_json_error(fd, 500, "Create failed");
@@ -1005,17 +1005,17 @@ static int source_put_handler(int fd, char *body)
 	if (item_exists && def->fields_hd) {
 		for (size_t i = 0; i < def->field_count; i++) {
 			const hyle_source_field_t *f = &def->fields[i];
-			if (!qmap_get(data_hd, f->name)) {
+			if (!corm_get(data_hd, f->name)) {
 				const char *cur_val = NULL;
 				if (def->record_id > 0) {
-					cur_val = qmap_field_get(def->fields_hd, key, f->name);
+					cur_val = corm_field_get(def->fields_hd, key, f->name);
 				} else {
 					char k[1024];
 					snprintf(k, sizeof(k), "%s:%s", key, f->name);
-					cur_val = qmap_get(def->fields_hd, k);
+					cur_val = corm_get(def->fields_hd, k);
 				}
 				if (cur_val && cur_val[0])
-					qmap_put(data_hd, f->name, cur_val);
+					corm_put(data_hd, f->name, cur_val);
 			}
 		}
 	}
@@ -1026,7 +1026,7 @@ static int source_put_handler(int fd, char *body)
 			respond_422_close(fd, err_json);
 			free(err_json);
 		}
-		qmap_close(data_hd);
+		corm_close(data_hd);
 		return 0;
 	}
 
@@ -1034,7 +1034,7 @@ static int source_put_handler(int fd, char *body)
 	if (rc == 0) {
 		source_after_update(fd, def->id, key, data_hd);
 	}
-	qmap_close(data_hd);
+	corm_close(data_hd);
 
 	if (rc != 0)
 		return respond_json_error(fd, 500, "Update failed");
@@ -1081,7 +1081,7 @@ static int inv_guard_cb(const hyle_source_def_t *target, void *user)
 			continue;
 
 		uint32_t inv_buf[16];
-		size_t count = qmap_inv_get(
+		size_t count = corm_inv_get(
 		        target->fields_hd, f->name, ctx->item_pos, inv_buf, 16);
 		if (count > 0) {
 			snprintf(
@@ -1144,7 +1144,7 @@ static int source_delete_handler(int fd, char *body)
 	}
 
 	if (def->record_id > 0 && def->fields_hd) {
-		uint32_t pos = qmap_pos(def->fields_hd, key);
+		uint32_t pos = corm_pos(def->fields_hd, key);
 		if (pos != UINT32_MAX) {
 			char err_buf[512] = { 0 };
 			struct inv_guard_ctx ctx = {
@@ -1239,7 +1239,7 @@ static int source_get_ordered_handler(int fd, char *body)
 			        hyle_registry_get_field_name(dataset_id, j);
 			if (!fname)
 				continue;
-			const char *fval = qmap_field_get(fhd, item_key, fname);
+			const char *fval = corm_field_get(fhd, item_key, fname);
 			json_object_object_add(
 			        row, fname,
 			        json_object_new_string(fval ? fval : ""));
