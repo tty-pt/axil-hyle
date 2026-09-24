@@ -1,0 +1,2 @@
+PROJECT_NAME           = "axil-hyle"
+@INCLUDE = ../mk/Doxyfile
