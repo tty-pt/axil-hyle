@@ -1,7 +1,7 @@
 all := libaxil-hyle
 SONAME-libaxil-hyle := axil-hyle
 
-LDLIBS-libaxil-hyle := -laxil -lcorm -lxylem -lhyle -lhyle-source -ljson-c -laxil-auth
+LDLIBS-libaxil-hyle := -laxil -lcorm -lxylem -lhyle -lhyle-source -ljson-c
 
 CFLAGS += -fPIC $(EXTRA_CFLAGS)
 
