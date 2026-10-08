@@ -1,3 +1,7 @@
+## 1.0.1
+
+- **Ecosystem Synchronization**: Rebuilt and synchronized with Hyle 1.4.0, Hyle-Source 1.1.0, Axil 1.5.0, and Corm 2.0.0. Cleaned compiler and linker flags.
+
 ## 1.0.0
 
 - **First stable release** — bridge library connecting Axil HTTP request handling with Hyle dataset queries and schema endpoints.
