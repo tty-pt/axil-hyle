@@ -1,8 +1,12 @@
-## 1.0.1
+## [1.0.1] - 2026-10-24
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tty-pt/axil-hyle/main/logo.png" alt="axil-hyle logo" width="220" />
+</p>
 
 - **Ecosystem Synchronization**: Rebuilt and synchronized with Hyle 1.4.0, Hyle-Source 1.1.0, Axil 1.5.0, and Corm 2.0.0. Cleaned compiler and linker flags.
 
-## 1.0.0
+## [1.0.0] - 2026-09-24
 
 - **First stable release** — bridge library connecting Axil HTTP request handling with Hyle dataset queries and schema endpoints.
 - **Dataset REST CRUD**: `axil_hyle_install_routes()` mounts the full endpoint set on Axil — query a dataset (`GET /api/dataset/:id`), get an item by key (`GET /:id/:key`), create (`POST /:id`), update (`PUT /:id/:key`), delete (`DELETE /:id/:key`) — all JSON, framework-neutral.
