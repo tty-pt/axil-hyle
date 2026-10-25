@@ -1,8 +1,13 @@
-## [1.0.1] - 2026-10-24
+## [1.0.2] - 2026-10-25
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/tty-pt/axil-hyle/main/logo.png" alt="axil-hyle logo" width="220" />
 </p>
+
+- **Ecosystem Synchronization**: Rebuilt and synchronized with Axil 1.6.0, Hyle 1.5.0, Hyle-Source 1.2.0, and Axil-Auth 1.2.1.
+- **Documentation & Asset Parity**: Aligned documentation and standardized README architecture overview.
+
+## [1.0.1] - 2026-10-24
 
 - **Ecosystem Synchronization**: Rebuilt and synchronized with Hyle 1.4.0, Hyle-Source 1.1.0, Axil 1.5.0, and Corm 2.0.0. Cleaned compiler and linker flags.
 
