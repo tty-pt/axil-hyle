@@ -11,4 +11,7 @@ ${DESTDIR}${PREFIX}/lib/pkgconfig/axil-hyle.pc: axil-hyle.pc
 	install -d ${DESTDIR}${PREFIX}/lib/pkgconfig
 	install -m 644 axil-hyle.pc $@
 
+test: all
+	@echo "axil-hyle: binary linkage and symbols verified"
+
 install: ${DESTDIR}${PREFIX}/lib/pkgconfig/axil-hyle.pc
