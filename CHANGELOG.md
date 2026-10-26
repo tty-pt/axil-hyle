@@ -1,4 +1,4 @@
-## [1.0.2] - 2026-10-25
+## [1.1.0]
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/tty-pt/axil-hyle/main/logo.png" alt="axil-hyle logo" width="220" />
