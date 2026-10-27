@@ -1,9 +1,5 @@
 ## [1.1.0]
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/tty-pt/axil-hyle/main/logo.png" alt="axil-hyle logo" width="220" />
-</p>
-
 - **Ecosystem Synchronization**: Rebuilt and synchronized with Axil 1.6.0, Hyle 1.5.0, Hyle-Source 1.2.0, and Axil-Auth 1.2.1.
 - **Documentation & Asset Parity**: Aligned documentation and standardized README architecture overview.
 
