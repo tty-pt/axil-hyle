@@ -1,3 +1,8 @@
+## [Unreleased] (target: v1.1.2)
+
+### Fixed
+- **Packaging Dependencies**: Explicitly add libstele across packaging dependencies and CI workflows.
+
 ## [1.1.0]
 
 - **Ecosystem Synchronization**: Rebuilt and synchronized with Axil 1.6.0, Hyle 1.5.0, Hyle-Source 1.2.0, and Axil-Auth 1.2.1.
