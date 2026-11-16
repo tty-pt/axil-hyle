@@ -10,7 +10,7 @@
 #if defined(__has_include) && __has_include(<ttypt/auth.h>)
 #include <ttypt/auth.h>
 #else
-#include <ttypt/xy-mod.h>
+#include <ttypt/xy.h>
 XY_DECL(const char *, get_request_user, int, fd);
 #endif
 #include <ttypt/corm.h>
