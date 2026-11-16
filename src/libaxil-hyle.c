@@ -7,13 +7,40 @@
 #include <sys/stat.h>
 
 #include <ttypt/axil.h>
+#if defined(__has_include) && __has_include(<ttypt/auth.h>)
 #include <ttypt/auth.h>
+#else
+#include <ttypt/xy-mod.h>
+XY_DECL(const char *, get_request_user, int, fd);
+#endif
 #include <ttypt/corm.h>
 #include <json-c/json.h>
 #include <hyle/hyle.h>
 #include <hyle/registry.h>
 #include <hyle-source/hyle_source.h>
 #include <ttypt/axil-hyle.h>
+
+#ifdef _WIN32
+#ifndef strtok_r
+#define strtok_r strtok_s
+#endif
+static char *axil_hyle_strndup(const char *s, size_t n)
+{
+	size_t len = 0;
+	while (len < n && s[len])
+		len++;
+	char *out = malloc(len + 1);
+	if (!out)
+		return NULL;
+	memcpy(out, s, len);
+	out[len] = '\0';
+	return out;
+}
+#define strndup axil_hyle_strndup
+#ifndef S_ISDIR
+#define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#endif
+#endif
 
 #define SOURCE_API_DEFAULT_PAGE 1
 #define SOURCE_API_DEFAULT_PER_PAGE 25

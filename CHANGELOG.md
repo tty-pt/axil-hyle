@@ -1,3 +1,10 @@
+## [1.1.4] - 2026-11-16
+
+### Added
+- **Windows (`winget` / `win32-x64`) OS Package & Prebuild Support**:
+  - Added `_WIN32` compatibility shims (`strtok_r`, `strndup`, `S_ISDIR`) and `#if __has_include(<ttypt/auth.h>)` header guard in `src/libaxil-hyle.c`.
+  - Expanded `.github/workflows/ci.yml` `publish_to` to all 7 OS formats (`deb,apk,rpm,pacman,brew,openbsd,winget`) and added `win32-x64` native N-API prebuild (`libaxil-hyle.dll`) to `@tty-pt/axil-hyle`.
+
 ## [1.1.3] - 2026-11-16
 
 ### Added

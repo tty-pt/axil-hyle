@@ -17,5 +17,7 @@ jobs:
       deps_rpm: "axil,libstele,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c-devel"
       deps_pacman: "axil,libstele,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c"
       deps_brew: "axil,libstele,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c"
-      publish_to: "deb,apk,rpm,pacman,brew,openbsd"
+      deps_winget: "mingw-w64-x86_64-json-c,mingw-w64-x86_64-xxhash,mingw-w64-x86_64-mman-win32,mingw-w64-x86_64-openssl"
+      deps_winget_tty: "libstele,libcorm,liblemma,libxylem,libhyle,libhyle-source,axil"
+      publish_to: "deb,apk,rpm,pacman,brew,openbsd,winget"
     secrets: inherit
