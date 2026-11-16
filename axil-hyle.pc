@@ -5,6 +5,6 @@ includedir=${prefix}/include
 
 Name: axil-hyle
 Description: Connector bridging Axil HTTP handling with Hyle dataset endpoints
-Version: 1.1.0
-Libs: -L${libdir} -laxil-hyle -laxil -lcorm -lxylem -lhyle -lhyle-source -ljson-c -laxil-auth
+Version: 1.1.4
+Libs: -L${libdir} -laxil-hyle -laxil -lcorm -lxylem -lhyle -lhyle-source -ljson-c
 Cflags: -I${includedir}

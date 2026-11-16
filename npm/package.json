@@ -1,0 +1,53 @@
+{
+  "name": "@tty-pt/axil-hyle",
+  "version": "1.1.4",
+  "type": "module",
+  "description": "Node.js/Browser REST client, C header distribution, and Xylem HTTP dataset CRUD bridge (libaxil-hyle) for Axil and Hyle",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "prebuilds",
+    "include",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/axil-hyle.test.mjs"
+  },
+  "dependencies": {
+    "@tty-pt/stele": "^1.7.1"
+  },
+  "peerDependencies": {
+    "@tty-pt/stele": ">=1.7.0"
+  },
+  "devDependencies": {
+    "@tty-pt/stele": "^1.7.1"
+  },
+  "keywords": [
+    "axil",
+    "axil-hyle",
+    "hyle",
+    "rest",
+    "crud",
+    "dataset",
+    "xylem",
+    "corm",
+    "napi"
+  ],
+  "author": "Paulo Quirino <q@qnixsoft.com>",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tty-pt/axil-hyle.git",
+    "directory": "npm"
+  },
+  "homepage": "https://tty.pt"
+}
