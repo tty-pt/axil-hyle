@@ -780,7 +780,7 @@ static int source_http_get_item_json(
 
 /* ── Route Handlers ──────────────────────────────────────────────── */
 
-static int source_get_handler(int fd, char *body)
+static int source_get_handler(socket_t fd, char *body)
 {
 	char dataset_id[128];
 	const hyle_source_def_t *def;
@@ -832,7 +832,7 @@ static int source_get_handler(int fd, char *body)
 	return r;
 }
 
-static int source_get_item_handler(int fd, char *body)
+static int source_get_item_handler(socket_t fd, char *body)
 {
 	char dataset_id[128] = { 0 };
 	char item_id[128] = { 0 };
@@ -860,7 +860,7 @@ static int source_get_item_handler(int fd, char *body)
 	return r;
 }
 
-static int source_post_handler(int fd, char *body)
+static int source_post_handler(socket_t fd, char *body)
 {
 	const hyle_source_def_t *def;
 	const char *username;
@@ -979,7 +979,7 @@ static int source_post_handler(int fd, char *body)
 	return respond_json(fd, 201, resp);
 }
 
-static int source_put_handler(int fd, char *body)
+static int source_put_handler(socket_t fd, char *body)
 {
 	const hyle_source_def_t *def;
 	const char *username;
@@ -1122,7 +1122,7 @@ static int inv_guard_cb(const hyle_source_def_t *target, void *user)
 	return 0;
 }
 
-static int source_delete_handler(int fd, char *body)
+static int source_delete_handler(socket_t fd, char *body)
 {
 	char dataset_id[128] = { 0 };
 	axil_env_get(
@@ -1223,7 +1223,7 @@ static int check_partition_owner(
 	return 1;
 }
 
-static int source_get_ordered_handler(int fd, char *body)
+static int source_get_ordered_handler(socket_t fd, char *body)
 {
 	char dataset_id[128] = { 0 };
 	char key[128] = { 0 };
@@ -1288,7 +1288,7 @@ static int source_get_ordered_handler(int fd, char *body)
 	return rc;
 }
 
-static int source_post_ordered_handler(int fd, char *body)
+static int source_post_ordered_handler(socket_t fd, char *body)
 {
 	char dataset_id[128] = { 0 };
 	char key[128] = { 0 };
@@ -1348,7 +1348,7 @@ static int source_post_ordered_handler(int fd, char *body)
 	return respond_json(fd, 201, resp);
 }
 
-static int source_put_ordered_handler(int fd, char *body)
+static int source_put_ordered_handler(socket_t fd, char *body)
 {
 	char dataset_id[128] = { 0 };
 	char key[128] = { 0 };
@@ -1418,7 +1418,7 @@ static int source_put_ordered_handler(int fd, char *body)
 	return respond_json(fd, 200, resp);
 }
 
-static int source_delete_ordered_handler(int fd, char *body)
+static int source_delete_ordered_handler(socket_t fd, char *body)
 {
 	(void)body;
 	char dataset_id[128] = { 0 };
@@ -1921,24 +1921,24 @@ static int partition_action_dispatch(int fd, char *body, const char *action)
 	return axil_hyle_partition_execute(fd, body, action, spec, parent_id);
 }
 
-static int partition_add_handler(int fd, char *body)
+static int partition_add_handler(socket_t fd, char *body)
 {
-	return partition_action_dispatch(fd, body, "add");
+	return partition_action_dispatch((int)fd, body, "add");
 }
 
-static int partition_remove_handler(int fd, char *body)
+static int partition_remove_handler(socket_t fd, char *body)
 {
-	return partition_action_dispatch(fd, body, "remove");
+	return partition_action_dispatch((int)fd, body, "remove");
 }
 
-static int partition_replace_handler(int fd, char *body)
+static int partition_replace_handler(socket_t fd, char *body)
 {
-	return partition_action_dispatch(fd, body, "replace");
+	return partition_action_dispatch((int)fd, body, "replace");
 }
 
-static int partition_update_handler(int fd, char *body)
+static int partition_update_handler(socket_t fd, char *body)
 {
-	return partition_action_dispatch(fd, body, "update");
+	return partition_action_dispatch((int)fd, body, "update");
 }
 
 int axil_hyle_register_partition_routes(const axil_hyle_partition_routes_spec_t *spec)
