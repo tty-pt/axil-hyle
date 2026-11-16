@@ -1,7 +1,9 @@
-## [Unreleased] (target: v1.1.2)
+## [1.1.2] - 2026-11-16
 
 ### Fixed
 - **Packaging Dependencies**: Explicitly add libstele across packaging dependencies and CI workflows.
+- **Arch Linux (`pacman`) Packaging (`.github/workflows/ci.yml`)**:
+  - Added `pacman` to `publish_to` (`deb,apk,rpm,pacman,brew,openbsd`), configured `deps_pacman`, and switched to `secrets: inherit`.
 
 ## [1.1.0]
 
