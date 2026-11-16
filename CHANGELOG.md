@@ -1,9 +1,10 @@
 ## [1.1.2] - 2026-11-16
 
 ### Fixed
-- **Packaging Dependencies**: Explicitly add libstele across packaging dependencies and CI workflows.
-- **Arch Linux (`pacman`) Packaging (`.github/workflows/ci.yml`)**:
-  - Added `pacman` to `publish_to` (`deb,apk,rpm,pacman,brew,openbsd`), configured `deps_pacman`, and switched to `secrets: inherit`.
+- **Packaging Dependencies**: Explicitly added `libstele` across packaging dependencies (`deps`, `deps_apk`, `deps_rpm`, `deps_brew`, `deps_openbsd`, `deps_winget_tty`) and `axil-hyle.pc`.
+- **Arch Linux (`pacman`) Packaging & OpenBSD Rebuild (`.github/workflows/ci.yml`)**:
+  - Added `pacman` to `publish_to` (`deb,apk,rpm,pacman,brew,openbsd`), configured `deps_pacman: "axil,libstele,libcorm,libxylem,libhyle,libhyle-source,axil-auth,json-c"`, and switched to `secrets: inherit`.
+  - Rebuilt OpenBSD package against `axil` `1.8.3`, `axil-auth` `1.3.3`, `libhyle` `1.7.4`, `libhyle-source` `1.4.1`, `libxylem` `1.8.1`, `libcorm` `2.4.2`, and `libstele` `1.7.1`.
 
 ## [1.1.0]
 
