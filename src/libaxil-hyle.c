@@ -1432,6 +1432,11 @@ static int source_delete_ordered_handler(int fd, char *body)
 
 void axil_hyle_install_routes(void)
 {
+	static int g_routes_installed = 0;
+	if (g_routes_installed)
+		return;
+	g_routes_installed = 1;
+
 	axil_register_handler(
 	        "GET:/api/dataset/:dataset_id", source_get_handler);
 	axil_register_handler(
@@ -1454,6 +1459,11 @@ void axil_hyle_install_routes(void)
 	axil_register_handler(
 	        "DELETE:/api/dataset/:dataset_id/:key/ordered/:n",
 	        source_delete_ordered_handler);
+}
+
+void xy_install(void)
+{
+	axil_hyle_install_routes();
 }
 
 /* ── Partition Sub-Resource Route Dispatch ───────────────────────── */

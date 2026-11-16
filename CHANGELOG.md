@@ -1,3 +1,12 @@
+## [1.1.3] - 2026-11-16
+
+### Added
+- **Colocated NPM Package `@tty-pt/axil-hyle` (`npm/`)**:
+  - Added Node-API native addon (`npm/native/axil_hyle_napi.c`, `npm/native/LIBS`) and isomorphic REST dataset client (`npm/dist/index.js`, `npm/dist/index.d.ts`) exposing `AxilHyleClient`, `createAxilHyleClient()`, `buildDatasetUrl()`, `getModulePath()`, `hasNativeModule()`, `installRoutes()`, and `registerPartitionRoutes()`.
+  - Bundled `libaxil-hyle` shared library prebuilds for `axil -m hyle` / `npx axil -m auth:hyle` and C header (`npm/include/ttypt/axil-hyle.h`) for zero-root downstream builds.
+- **Direct Xylem Module Entrypoint (`src/libaxil-hyle.c`)**:
+  - Added `xy_install(void)` and an idempotency guard in `axil_hyle_install_routes()` so `libaxil-hyle` mounts `/api/dataset/...` automatically when loaded directly via `axil -m hyle` while remaining safe when also invoked by downstream modules.
+
 ## [1.1.2] - 2026-11-16
 
 ### Fixed
