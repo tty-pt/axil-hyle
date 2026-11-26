@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Changed
+- **Standardized npm Metadata (`npm/package.json`, `npm/README.md`)**:
+  - Standardized author, `BSD-2-Clause` license, and npm `README.md` documentation (`0d8e09c`).
+
 ## [1.1.4] - 2026-11-16
 
 ### Added
